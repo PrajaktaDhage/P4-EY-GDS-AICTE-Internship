@@ -1,11 +1,20 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-export const connectDB = async (req, res) => {
-    //mongo server url
-    const url = "mongodb://127.0.0.1:27017/finmanager";
+dotenv.config();
 
-    const {connection} = await mongoose.connect(url);
+export const connectDB = async () => {
+  try {
+    const url = process.env.MONGODB_URL || "mongodb://127.0.0.1:27017/finmanager";
 
-    console.log(`MongoDB Connection successful to ${connection.host}`);
+    const { connection } = await mongoose.connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-}
+    console.log(`MongoDB connection successful to ${connection.host}`);
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error.message);
+    process.exit(1); // Exit the process with failure
+  }
+};
